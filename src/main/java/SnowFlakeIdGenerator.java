@@ -7,7 +7,7 @@ public class SnowFlakeIdGenerator {
     private static final long SEQUENCE_BITS = 12L;
 
     // Custom epoch (January 1, 2024 Midnight UTC) - to maximize timestamp range
-    private static final long CUSTOM_EPOCH = 1704067200000L;
+    private static final long CUSTOM_EPOCH = 1735689600000L;
 
     // Maximum values (calculated from bit allocation)
     private static final long MAX_MACHINE_ID = (1L << MACHINE_ID_BITS) - 1;
