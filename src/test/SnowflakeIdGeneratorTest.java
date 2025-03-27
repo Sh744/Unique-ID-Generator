@@ -1,6 +1,8 @@
 package test;
 import main.java.BackwardClockGenerator;
 import main.java.SnowFlakeIdGenerator;
+
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import static java.lang.Thread.sleep;
@@ -23,6 +25,8 @@ public class SnowflakeIdGeneratorTest {
 
         //test for time ordering(Checks if IDs are sortable by time)
         timeOrderingTest();
+
+        testConcurrencyGeneration();
 
         System.out.println("\nAll edge case tests completed successfully!");
     }
@@ -115,6 +119,54 @@ public class SnowflakeIdGeneratorTest {
         assert timeStamp2 >= timeStamp1 : "Later timestamp should be >= earlier timestamp";
 
         System.out.println("✅ Time ordering test passed");
+    }
+
+    private static void testConcurrencyGeneration(){
+        System.out.println("\nRunning concurrency generation test...");
+
+        final int THREAD_COUNT = 5;
+        final int IDS_PER_THREAD = 100;
+        SnowFlakeIdGenerator generator = new SnowFlakeIdGenerator(1);
+
+        Set<Long> ids = Collections.synchronizedSet(new HashSet<>());
+
+        Thread[] threads = new Thread[THREAD_COUNT];
+
+        for (int t = 0; t < THREAD_COUNT; t++) {
+            final int threadId = t;
+            threads[t] = new Thread(() -> {
+                try {
+                    for (int i = 0; i < IDS_PER_THREAD; i++) {
+                        long id = generator.nextId();
+                        if (!ids.add(id)) {
+                            System.err.println("Thread " + threadId + " generated duplicate ID: " + id);
+                            return;
+                        }
+                    }
+                    System.out.println("Thread " + threadId + " completed successfully");
+                } catch (Exception e) {
+                    System.err.println("Thread " + threadId + " error: " + e.getMessage());
+                }
+            });
+            threads[t].start();
+        }
+        // Wait for all threads to finish
+        try {
+            for (Thread thread : threads) {
+                thread.join();
+            }
+        } catch (InterruptedException e) {
+            System.err.println("Test interrupted: " + e.getMessage());
+        }
+
+        // Verify results
+        int expectedCount = THREAD_COUNT * IDS_PER_THREAD;
+        boolean success = ids.size() == expectedCount;
+
+        System.out.println("\nTest result: " + (success ? "Success" : "Failed"));
+        System.out.println("Expected " + expectedCount + " unique IDs");
+        System.out.println("Actually generated " + ids.size() + " unique IDs");
+
     }
 
 }
