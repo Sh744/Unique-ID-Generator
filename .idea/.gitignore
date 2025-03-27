@@ -1,0 +1,69 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+# IntelliJ IDEA files
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea_modules/
+out/
+
+# Compiled class files
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# Gradle
+.gradle/
+build/
+
+# Log files
+*.log
+log/
+logs/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# JVM crash logs
+hs_err_pid*
+
+# Local configuration files
+*.properties
+!gradle-wrapper.properties
+*.config
+*.conf
+
+# Eclipse files
+.classpath
+.project
+.settings/
+
+# VSCode
+.vscode/
