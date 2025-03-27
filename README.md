@@ -1,7 +1,8 @@
 # Unique-ID-Generator
 ## Overview
-This project implements a Snowflake ID Generator based on Twitter's Snowflake architecture. Snowflake IDs are unique, time-based, and sortable 64-bit integers designed for distributed systems. Each ID is composed of:
+This project implements a Snowflake ID Generator based on Twitter's Snowflake ID System. Snowflake IDs are unique, time-based, and sortable 64-bit integers designed for distributed systems. Each ID is composed of:
 
+Sign bit: Always zero to ensure ID is positive
 Timestamp (41 bits): Epoch used was January 1, 2025
 Machine ID (10 bits): Identifier for the generator (0-1023)
 Sequence number (12 bits): Counter for IDs generated in the same millisecond (0-4095)
@@ -32,7 +33,7 @@ Simulates clock moving backwards
 Validates the system's ability to detect and handle time-related edge cases
 
 ### SnowflakeIdGeneratorTest.java
-A comprehensive test suite that verifies:
+Test code that verifies:
 
 Basic functionality
 ID uniqueness
@@ -40,16 +41,6 @@ Clock drift detection and handling
 Time ordering of generated IDs
 Concurrent ID generation
 Multi-node ID generation
-
-### Testing
-The project includes extensive testing for various scenarios:
-
-Basic Test: Verifies ID generation and bit allocation
-Uniqueness Test: Ensures uniqueness across thousands of IDs
-Clock Test: Validates handling of clock moving backwards
-Time Ordering Test: Confirms IDs are sortable by time
-Concurrency Test: Verifies thread safety with multiple concurrent generators
-Multi-Node Test: Ensures uniqueness across different machine IDs
 
 Run the tests using:
 javaCopyjava test.SnowflakeIdGeneratorTest
