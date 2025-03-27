@@ -4,7 +4,7 @@ This project implements a Snowflake ID Generator based on Twitter's Snowflake ID
 
 - *Sign bit*: Always zero to ensure ID is positive
 - *Timestamp*: Epoch used was January 1, 2025
-- *Machine ID* : Identifier for the generator 
+- *Machine ID* : Identifier for the server/machine
 - *Sequence number*: Counter for IDs generated in the same millisecond
 
 ## Features
