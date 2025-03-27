@@ -1,4 +1,5 @@
 package test;
+import main.java.BackwardClockGenerator;
 import main.java.SnowFlakeIdGenerator;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +19,9 @@ public class SnowflakeIdGeneratorTest {
 
         // Test 1: Clock moves backward
         testClockMovingBackwards();
+
+        //Tests Clock moving Forward
+        testClockMovingForward();
 
         System.out.println("\nAll edge case tests completed successfully!");
     }
@@ -61,5 +65,67 @@ public class SnowflakeIdGeneratorTest {
 
         System.out.println("Generated " + count + " unique IDs successfully");
         System.out.println("Uniqueness test passed!");
+    }
+    private static void testClockMovingBackwards() {
+        System.out.println("\nRunning Clock Moving Backwards test...");
+
+        // Create a custom generator with a manipulated clock
+        BackwardClockGenerator generator = new BackwardClockGenerator(30);
+
+        // First call should work fine
+        long id1 = generator.nextId();
+        System.out.println("First ID generated successfully: " + id1);
+
+        // Simulate clock moving backwards
+        generator.simulateClockMovingBackward(50); // 50 ms backward
+
+        // Second call should throw exception
+        try {
+            long id2 = generator.nextId();
+            generator.fail("Should have thrown exception when clock moved backwards. Generated ID: " + id2);
+        } catch (RuntimeException e) {
+            System.out.println("✓ Correctly threw exception when clock moved backwards: " + e.getMessage());
+        }
+
+        System.out.println("Clock backward test passed");
+    }
+
+    private static void testClockMovingForward() {
+        System.out.println("\nRunning Clock Moving Forward test...");
+
+        // Create a custom generator with a manipulated clock
+        BackwardClockGenerator generator = new BackwardClockGenerator(30);
+
+        // Generate first ID
+        long id1 = generator.nextId();
+        System.out.println("First ID generated successfully: " + id1);
+
+        // Simulate clock moving forward
+        long forwardMs = 1000; // 1 second forward
+        generator.simulateClockMovingForward(forwardMs);
+
+        // Second call should work fine and have a greater timestamp
+        try {
+            long id2 = generator.nextId();
+            System.out.println("Second ID generated successfully: " + id2);
+
+            // Verify ID2 is greater than ID1
+            assert id2 > id1 : "Later ID should be greater than earlier ID";
+
+            // Extract timestamps and verify gap
+            long ts1 = SnowFlakeIdGenerator.getTimestampFromId(id1);
+            long ts2 = SnowFlakeIdGenerator.getTimestampFromId(id2);
+            long actualGap = ts2 - ts1;
+
+            System.out.println("Time gap: " + actualGap + "ms (expected ~" + forwardMs + "ms)");
+            assert actualGap > 0 : "Timestamp gap should be positive";
+            assert Math.abs(actualGap - forwardMs) < 100 :
+                    "Timestamp gap should be approximately " + forwardMs + "ms";
+
+        } catch (Exception e) {
+            generator.fail("Should not throw exception when clock moves forward: " + e.getMessage());
+        }
+
+        System.out.println("Clock forward test passed");
     }
 }

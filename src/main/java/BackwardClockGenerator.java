@@ -33,4 +33,7 @@ public class BackwardClockGenerator extends SnowFlakeIdGenerator{
     protected long getCurrentTimestamp() {
         return simulatedCurrentTimestamp;
     }
+    public void fail(String message) {
+        throw new AssertionError(message);
+    }
 }
