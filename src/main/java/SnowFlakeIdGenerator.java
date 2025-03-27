@@ -5,8 +5,8 @@ public class SnowFlakeIdGenerator {
     private static final long machineIDBits = 10L;
     private static final long sequenceBits = 12L;
     private static final long epoch = 1735689600000L;
-    private static final long maxMachineId = (long)Math.pow(2, machineIDBits) - 1;
-    private static final long maxSequence = (long)Math.pow(2, sequenceBits) - 1;
+    private static final long maxMachineId = (1L << machineIDBits) - 1;
+    private static final long maxSequence = (1L << sequenceBits) - 1;
     private static final long machineShift = sequenceBits;
     private static final long timestampShift = sequenceBits + machineIDBits;
     private final long machineId;
@@ -31,30 +31,17 @@ public class SnowFlakeIdGenerator {
         return currentTimestamp;
     }
 
-
-    public long getTimestampFromId(long id) {
-        return ((id >> timestampShift) + epoch);
-    }
-
-    public static long getMachineIdFromId(long id) {
-        return (id >> timestampShift) & maxMachineId;
-    }
-
-    public static long getSequenceFromId(long id) {
-        return id & maxSequence;
-    }
-
     public synchronized long nextId() {
         long currentTimestamp = getCurrentTimestamp();
 
-        // Handle clock moving backwards
+        // Clock moving backwards
         if (currentTimestamp < lastTimestamp) {
             throw new RuntimeException(
                     String.format("Clock moved backwards. Refusing to generate ID for %d milliseconds",
                             lastTimestamp - currentTimestamp));
         }
 
-        // incrememnts sequence number if machine generates more than one id at the same time
+        // increments sequence number if machine generates more than one id at the same time
         if (currentTimestamp == lastTimestamp) {
             sequence = (sequence + 1) & maxSequence;
 
@@ -63,14 +50,12 @@ public class SnowFlakeIdGenerator {
                 currentTimestamp = waitForNextMillis(currentTimestamp);
             }
         } else {
-            // We're in a new millisecond, reset sequence
             sequence = 0;
         }
 
-        // Save the timestamp for next check
         lastTimestamp = currentTimestamp;
 
-        // Combine all parts to generate the ID
+        // ID Generation
         return ((currentTimestamp - epoch) << timestampShift) |
                 (machineId << machineShift) |
                 sequence;

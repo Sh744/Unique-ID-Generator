@@ -7,7 +7,7 @@ import java.util.Set;
 public class SnowflakeIdGeneratorTest {
 
     public static void main(String[] args) {
-        System.out.println("SNOWFLAKE ID GENERATOR EDGE CASE TESTS");
+        System.out.println("SNOWFLAKE ID EDGE CASE TESTS");
 
         basicTest();
 
