@@ -43,7 +43,7 @@ public class SnowFlakeIdGenerator {
 
     // Utility methods to extract components from ID
 
-    public static long getTimestampFromId(long id) {
+    public long getTimestampFromId(long id) {
         return ((id >> TIMESTAMP_SHIFT) + CUSTOM_EPOCH);
     }
 

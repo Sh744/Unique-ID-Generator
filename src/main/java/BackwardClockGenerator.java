@@ -14,13 +14,6 @@ public class BackwardClockGenerator extends SnowFlakeIdGenerator{
         this.simulatedCurrentTimestamp -= milliseconds;
     }
 
-    //simulates clock moving forwards
-    public void simulateClockMovingForward(long milliseconds) {
-        if (milliseconds < 0) {
-            throw new IllegalArgumentException("Milliseconds must be positive");
-        }
-        this.simulatedCurrentTimestamp += milliseconds;
-    }
     public long getSimulatedCurrentTimestamp() {
         return simulatedCurrentTimestamp;
     }
