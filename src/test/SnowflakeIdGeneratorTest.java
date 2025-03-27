@@ -28,6 +28,8 @@ public class SnowflakeIdGeneratorTest {
 
         testConcurrencyGeneration();
 
+        testMultipleNodeGeneration();
+
         System.out.println("\nAll edge case tests completed successfully!");
     }
     private static void basicTest() {
@@ -118,7 +120,7 @@ public class SnowflakeIdGeneratorTest {
         // Later timestamp should be >= earlier timestamp
         assert timeStamp2 >= timeStamp1 : "Later timestamp should be >= earlier timestamp";
 
-        System.out.println("✅ Time ordering test passed");
+        System.out.println("Time ordering test passed");
     }
 
     private static void testConcurrencyGeneration(){
@@ -168,5 +170,39 @@ public class SnowflakeIdGeneratorTest {
         System.out.println("Actually generated " + ids.size() + " unique IDs");
 
     }
+    private static void testMultipleNodeGeneration() {
+        System.out.println("\nRunning Multiple Node generation test...");
+        final int NODE_COUNT = 5;
+        final int IDS_PER_NODE = 100;
+
+        SnowFlakeIdGenerator[] generators = new SnowFlakeIdGenerator[NODE_COUNT];
+        for (int i = 0; i < NODE_COUNT; i++) {
+            generators[i] = new SnowFlakeIdGenerator(i);
+        }
+        Set<Long> ids = new HashSet<>();
+
+        // Generate IDs from each node
+        for (int nodeId = 0; nodeId < NODE_COUNT; nodeId++) {
+            for (int i = 0; i < IDS_PER_NODE; i++) {
+                long id = generators[nodeId].nextId();
+
+                // Verify machine ID in generated ID
+                long extractedNodeId = SnowFlakeIdGenerator.getMachineIdFromId(id);
+                assert extractedNodeId == nodeId :
+                        "Incorrect node ID encoded (expected: " + nodeId + ", got: " + extractedNodeId + ")";
+
+                // Check for collisions across all nodes
+                if (!ids.add(id)) {
+                    System.out.println("Duplicate ID " + id + " generated across different nodes");
+                }
+            }
+
+            System.out.println("Node " + nodeId + " generated " + IDS_PER_NODE + " unique IDs");
+        }
+
+        System.out.println(" Generated " + ids.size() + " unique IDs across " + NODE_COUNT + " nodes");
+        System.out.println("Multi-node generation test passed");
+    }
 
 }
+
